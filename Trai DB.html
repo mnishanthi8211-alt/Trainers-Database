@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trainers Database</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-image: url("https://images.unsplash.com/photo-1492724441997-5dc865305da7");
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin: auto;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 6px;
+            width: 220px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 8px;
+            cursor: pointer;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px;
+            display: inline-block;
+            width: 230px;
+            background: #f9f9f9;
+        }
+
+        .card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Trainers Database</h2>
+
+<h3>Add Trainer Details</h3>
+
+<input type="text" id="name" placeholder="Trainer Name"><br>
+
+<select id="level">
+    <option value="">Select Level</option>
+    <option>Phase I</option>
+    <option>Phase II</option>
+    <option>Phase III</option>
+</select><br>
+
+<input type="number" id="year" placeholder="Year"><br>
+
+<input type="text" id="institute" placeholder="Institute Name"><br>
+
+<input type="file" id="photo" accept="image/*"><br>
+
+<button onclick="addTrainer()">Add Trainer</button>
+
+<hr>
+
+<h3>Search Trainers by Institute</h3>
+
+<input type="text" id="searchInstitute" placeholder="Enter Institute Name">
+<button onclick="filterByInstitute()">Search</button>
+
+<div id="trainerList"></div>
+
+</div>
+
+<script>
+
+let trainers = [];
+
+function addTrainer(){
+
+    let name = document.getElementById("name").value;
+    let level = document.getElementById("level").value;
+    let year = document.getElementById("year").value;
+    let institute = document.getElementById("institute").value;
+    let photoInput = document.getElementById("photo");
+
+    if(name=="" || level=="" || year=="" || institute=="" || photoInput.files.length==0){
+        alert("Please fill all fields");
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+
+        let trainer = {
+            name: name,
+            level: level,
+            year: year,
+            institute: institute,
+            photo: e.target.result
+        };
+
+        trainers.push(trainer);
+        displayTrainers(trainers);
+    };
+
+    reader.readAsDataURL(photoInput.files[0]);
+
+    document.getElementById("name").value="";
+    document.getElementById("level").value="";
+    document.getElementById("year").value="";
+    document.getElementById("institute").value="";
+    document.getElementById("photo").value="";
+}
+
+function displayTrainers(list){
+
+    let container = document.getElementById("trainerList");
+    container.innerHTML="";
+
+    list.forEach(function(trainer){
+
+        container.innerHTML += `
+            <div class="card">
+                <img src="${trainer.photo}">
+                <h4>${trainer.name}</h4>
+                <p><b>Level:</b> ${trainer.level}</p>
+                <p><b>Year:</b> ${trainer.year}</p>
+                <p><b>Institute:</b> ${trainer.institute}</p>
+            </div>
+        `;
+    });
+}
+
+function filterByInstitute(){
+
+    let search = document.getElementById("searchInstitute").value.toLowerCase();
+
+    let filtered = trainers.filter(function(trainer){
+        return trainer.institute.toLowerCase() === search;
+    });
+
+    displayTrainers(filtered);
+}
+
+</script>
+
+</body>
+</html>
